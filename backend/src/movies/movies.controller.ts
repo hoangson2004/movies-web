@@ -16,11 +16,26 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 export class MoviesController {
   constructor(private readonly movieService: MoviesService) {}
 
+  @Get('genres')
+  async getGenres() {
+    return await this.movieService.findGenres();
+  }
+
   @Get()
-  findAll(@Query('page') page?: string, @Query('limit') limit?: string) {
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('title') title?: string,
+    @Query('genre') genre?: string,
+    @Query('year') year?: string,
+    @Query('rating') rating?: string,
+  ) {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 10;
-    return this.movieService.findAll(pageNum, limitNum);
+
+    const filters = { title, genre, year, rating };
+
+    return await this.movieService.findAll(filters, pageNum, limitNum);
   }
 
   @Get(':id')

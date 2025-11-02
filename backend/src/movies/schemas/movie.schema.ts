@@ -14,6 +14,15 @@ export class Movie extends Document {
 
   @Prop()
   poster: string;
+
+  @Prop()
+  rating: number;
+
+  @Prop()
+  year: number;
+
+  @Prop()
+  genre: string;
 }
 
 export const MovieSchema = SchemaFactory.createForClass(Movie);

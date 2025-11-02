@@ -7,8 +7,12 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 export class MoviesService {
   constructor(private readonly moviesRepo: MoviesRepository) {}
 
-  async findAll(page = 1, limit = 10) {
-    const { movies, total } = await this.moviesRepo.findAll(page, limit);
+  async findAll(filters: any, page = 1, limit = 10) {
+    const { movies, total } = await this.moviesRepo.findAll(
+      filters,
+      page,
+      limit,
+    );
     return {
       data: movies,
       total,
@@ -38,5 +42,9 @@ export class MoviesService {
     const deleted = await this.moviesRepo.delete(id);
     if (!deleted) throw new NotFoundException(`Movie with id ${id} not found`);
     return deleted;
+  }
+
+  async findGenres() {
+    return this.moviesRepo.findGenres();
   }
 }
