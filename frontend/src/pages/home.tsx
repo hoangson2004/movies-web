@@ -5,7 +5,7 @@ import { MovieGrid } from "../components/movie-grid"
 import { MovieFilters } from "../components/movie-filters"
 import { Header } from "../components/header"
 import type { Movie } from "../types/movie"
-import { fetchMovies, fetchGenres } from "../api/movies"
+import { fetchList, fetchGenres } from "../api/movies"
 
 interface HomePageProps {
     onSelectMovie: (movieId: string) => void
@@ -29,7 +29,7 @@ export function HomePage({ onSelectMovie }: HomePageProps) {
     const handleSearch = async () => {
         try {
             setLoading(true)
-            const data = await fetchMovies(
+            const data = await fetchList(
                 page,
                 16,
                 searchQuery,

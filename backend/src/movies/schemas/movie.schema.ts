@@ -13,6 +13,9 @@ export class Movie extends Document {
   poster: string;
 
   @Prop()
+  backdrop: string;
+
+  @Prop()
   rating: number;
 
   @Prop()
@@ -32,3 +35,12 @@ export class Movie extends Document {
 }
 
 export const MovieSchema = SchemaFactory.createForClass(Movie);
+
+MovieSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (_, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+  },
+});

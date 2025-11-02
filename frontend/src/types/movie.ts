@@ -5,11 +5,14 @@ export interface Movie {
     genre: string[]
     year: number
     poster: string
-    description: string
     views: number
+    backdrop: string
+    description: string
+    duration: number
+    stars: string[]
 }
 
-export interface MoviesResponse {
+export interface MovieList {
     data: Movie[]
     total: number
     page: number

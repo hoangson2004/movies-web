@@ -1,7 +1,7 @@
 import { apiConfig, getFullUrl } from "./config"
-import type { MoviesResponse } from "../types/movie"
+import type {Movie, MovieList} from "../types/movie"
 
-export async function fetchMovies(
+export async function fetchList(
     page: number,
     limit: number,
     title?: string,
@@ -10,7 +10,7 @@ export async function fetchMovies(
     rating?: string,
     sortBy?: string,
     order?: "asc" | "desc",
-): Promise<MoviesResponse> {
+): Promise<MovieList> {
     const params = new URLSearchParams()
     params.append("page", page.toString())
     params.append("limit", limit.toString())
@@ -21,7 +21,7 @@ export async function fetchMovies(
     if (sortBy) params.append("sortBy", sortBy)
     if (order) params.append("order", order)
 
-    const response = await fetch(getFullUrl(apiConfig.endpoints.movies, params))
+    const response = await fetch(getFullUrl(apiConfig.endpoints.list, params))
     if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
     }
@@ -30,6 +30,14 @@ export async function fetchMovies(
 
 export async function fetchGenres(): Promise<string[]> {
     const response = await fetch(getFullUrl(apiConfig.endpoints.genres))
+    if (!response.ok) {
+        throw new Error(`API error: ${response.status}`)
+    }
+    return response.json()
+}
+
+export async function getMovieById(movieId: string): Promise<Movie> {
+    const response = await fetch(getFullUrl(`${apiConfig.endpoints.details}/${movieId}`))
     if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
     }
