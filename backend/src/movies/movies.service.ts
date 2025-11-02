@@ -7,11 +7,17 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 export class MoviesService {
   constructor(private readonly moviesRepo: MoviesRepository) {}
 
-  async findAll(filters: any, page = 1, limit = 10) {
+  async findAll(
+    filters: any = {},
+    page = 1,
+    limit = 10,
+    sort: { sortBy?: string; order?: 'asc' | 'desc' } = {},
+  ) {
     const { movies, total } = await this.moviesRepo.findAll(
       filters,
       page,
       limit,
+      sort,
     );
     return {
       data: movies,

@@ -3,7 +3,7 @@ import { createReadStream, statSync } from 'fs';
 import { join } from 'path';
 import type { Request, Response } from 'express';
 
-@Controller('stream')
+@Controller('api/stream')
 export class StreamController {
   @Get(':filename')
   streamVideo(

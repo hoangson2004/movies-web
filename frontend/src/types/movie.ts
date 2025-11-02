@@ -2,11 +2,11 @@ export interface Movie {
     id: string
     title: string
     rating: number
-    genre: string
+    genre: string[]
     year: number
     poster: string
     description: string
-    fileName: string
+    views: number
 }
 
 export interface MoviesResponse {

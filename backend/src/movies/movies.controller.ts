@@ -12,7 +12,7 @@ import { MoviesService } from './movies.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
 
-@Controller('movies')
+@Controller('api/movies')
 export class MoviesController {
   constructor(private readonly movieService: MoviesService) {}
 
@@ -29,13 +29,16 @@ export class MoviesController {
     @Query('genre') genre?: string,
     @Query('year') year?: string,
     @Query('rating') rating?: string,
+    @Query('sortBy') sortBy?: string,
+    @Query('order') order?: 'asc' | 'desc',
   ) {
     const pageNum = page ? parseInt(page, 10) : 1;
-    const limitNum = limit ? parseInt(limit, 10) : 10;
+    const limitNum = limit ? parseInt(limit, 10) : 16;
 
     const filters = { title, genre, year, rating };
+    const sort = { sortBy, order };
 
-    return await this.movieService.findAll(filters, pageNum, limitNum);
+    return await this.movieService.findAll(filters, pageNum, limitNum, sort);
   }
 
   @Get(':id')

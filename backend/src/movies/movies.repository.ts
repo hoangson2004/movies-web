@@ -12,7 +12,14 @@ export class MoviesRepository {
     private readonly movieModel: Model<Movie>,
   ) {}
 
-  async findAll(filters: any = {}, page = 1, limit = 10) {
+  private allowedSortFields = new Set(['title', 'year', 'rating', 'genre', 'views']);
+
+  async findAll(
+    filters: any = {},
+    page = 1,
+    limit = 10,
+    sort: { sortBy?: string; order?: 'asc' | 'desc' } = {},
+  ) {
     const skip = (page - 1) * limit;
     const query: any = {};
 
@@ -21,7 +28,7 @@ export class MoviesRepository {
     }
 
     if (filters.genre) {
-      query.genre = filters.genre;
+      query.genre = { $in: [filters.genre] }; // vì schema genre là array
     }
 
     if (filters.year) {
@@ -32,9 +39,16 @@ export class MoviesRepository {
       query.rating = { $gte: parseFloat(filters.rating) };
     }
 
+    let sortObj: any = {};
+    if (sort && sort.sortBy && this.allowedSortFields.has(sort.sortBy)) {
+      sortObj[sort.sortBy] = sort.order === 'desc' ? -1 : 1;
+    } else {
+      sortObj = { createdAt: -1 };
+    }
+
     const [movies, total] = await Promise.all([
-      this.movieModel.find(query).skip(skip).limit(limit).exec(),
-      this.movieModel.countDocuments().exec(),
+      this.movieModel.find(query).sort(sortObj).skip(skip).limit(limit).exec(),
+      this.movieModel.countDocuments(query).exec(),
     ]);
     return { movies, total };
   }

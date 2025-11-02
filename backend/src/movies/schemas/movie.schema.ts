@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-@Schema()
+@Schema({ timestamps: true })
 export class Movie extends Document {
   @Prop({ required: true })
   title: string;
@@ -10,19 +10,25 @@ export class Movie extends Document {
   description: string;
 
   @Prop()
-  fileName: string;
-
-  @Prop()
   poster: string;
 
   @Prop()
   rating: number;
 
   @Prop()
+  duration: number;
+
+  @Prop({ type: [String], default: [] })
+  stars: string[];
+
+  @Prop()
   year: number;
 
   @Prop()
-  genre: string;
+  views: number;
+
+  @Prop({ type: [String], default: [] })
+  genre: string[];
 }
 
 export const MovieSchema = SchemaFactory.createForClass(Movie);

@@ -4,7 +4,8 @@ import { useState, useEffect } from "react"
 import { MovieGrid } from "../components/movie-grid"
 import { MovieFilters } from "../components/movie-filters"
 import { Header } from "../components/header"
-import type { Movie, MoviesResponse } from "../types/movie"
+import type { Movie } from "../types/movie"
+import { fetchMovies, fetchGenres } from "../api/movies"
 
 interface HomePageProps {
     onSelectMovie: (movieId: string) => void
@@ -19,63 +20,62 @@ export function HomePage({ onSelectMovie }: HomePageProps) {
     const [selectedGenre, setSelectedGenre] = useState<string>("")
     const [selectedRating, setSelectedRating] = useState<string>("")
     const [selectedYear, setSelectedYear] = useState<string>("")
+    const [selectedSortBy, setSelectedSortBy] = useState<string>("")
+    const [selectedOrder, setSelectedOrder] = useState<"asc" | "desc">("desc")
     const [page, setPage] = useState(1)
     const [totalPages, setTotalPages] = useState(1)
     const [genres, setGenres] = useState<string[]>([])
 
-    useEffect(() => {
-        const fetchMovies = async () => {
-            try {
-                setLoading(true)
-                const params = new URLSearchParams()
-                params.append("page", page.toString())
-                params.append("limit", "10")
-                if (searchQuery) params.append("title", searchQuery)
-                if (selectedGenre) params.append("genre", selectedGenre)
-                if (selectedYear) params.append("year", selectedYear)
-                if (selectedRating) params.append("rating", selectedRating)
-
-                const response = await fetch(`http://localhost:3000/movies?${params.toString()}`)
-
-                if (!response.ok) {
-                    throw new Error(`API error: ${response.status}`)
-                }
-
-                const data: MoviesResponse = await response.json()
-                setMovies(data.data)
-                setTotalPages(data.totalPages)
-                setError(null)
-            } catch (err) {
-                console.error("[v0] Error fetching movies:", err)
-                setError(err instanceof Error ? err.message : "Failed to fetch movies")
-            } finally {
-                setLoading(false)
-            }
+    const handleSearch = async () => {
+        try {
+            setLoading(true)
+            const data = await fetchMovies(
+                page,
+                16,
+                searchQuery,
+                selectedGenre,
+                selectedYear,
+                selectedRating,
+                selectedSortBy || undefined,
+                selectedOrder,
+            )
+            setMovies(data.data)
+            setTotalPages(data.totalPages)
+            setError(null)
+        } catch (err) {
+            console.error("[v0] Error fetching movies:", err)
+            setError(err instanceof Error ? err.message : "Failed to fetch movies")
+        } finally {
+            setLoading(false)
         }
-
-        fetchMovies()
-    }, [searchQuery, selectedGenre, selectedRating, selectedYear, page])
+    }
 
     useEffect(() => {
-        const fetchGenres = async () => {
+        handleSearch()
+    }, [page])
+
+    useEffect(() => {
+        const fetchGenresList = async () => {
             try {
-                const response = await fetch("http://localhost:3000/movies/genres")
-                if (response.ok) {
-                    const data = await response.json()
-                    setGenres(data)
-                }
+                const data = await fetchGenres()
+                setGenres(data)
             } catch (err) {
                 console.error("[v0] Error fetching genres:", err)
             }
         }
 
-        fetchGenres()
+        fetchGenresList()
     }, [])
 
     if (loading) {
         return (
             <main className="min-h-screen bg-background text-foreground flex items-center justify-center">
-                <p className="text-lg">Loading movies...</p>
+                <div className="flex flex-col items-center gap-4">
+                    <div className="relative h-12 w-12">
+                        <div className="absolute inset-0 animate-spin rounded-full border-4 border-muted border-t-primary"></div>
+                    </div>
+                    <p className="text-lg text-muted-foreground">Loading movies...</p>
+                </div>
             </main>
         )
     }
@@ -102,14 +102,16 @@ export function HomePage({ onSelectMovie }: HomePageProps) {
                     selectedRating={selectedRating}
                     onRatingChange={setSelectedRating}
                     searchQuery={searchQuery}
-                    onSearchChange={(q) => {
-                        setSearchQuery(q)
-                        setPage(1)
-                    }}
+                    onSearchChange={setSearchQuery}
                     selectedYear={selectedYear}
-                    onYearChange={(y) => {
-                        setSelectedYear(y)
+                    onYearChange={setSelectedYear}
+                    selectedSortBy={selectedSortBy}
+                    onSortByChange={setSelectedSortBy}
+                    selectedOrder={selectedOrder}
+                    onOrderChange={setSelectedOrder}
+                    onSearch={() => {
                         setPage(1)
+                        handleSearch()
                     }}
                 />
                 <MovieGrid movies={movies} onSelectMovie={onSelectMovie} />
