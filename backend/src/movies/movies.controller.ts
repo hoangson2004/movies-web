@@ -60,4 +60,9 @@ export class MoviesController {
   remove(@Param('id') id: string) {
     return this.movieService.remove(id);
   }
+
+  @Get(':id/recommendations')
+  async getRecommendations(@Param('id') id: string) {
+    return this.movieService.getRecommendations(id);
+  }
 }

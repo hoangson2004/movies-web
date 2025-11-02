@@ -76,4 +76,8 @@ export class MoviesRepository {
     const genres = await this.movieModel.distinct('genre').exec();
     return genres;
   }
+
+  async findAllExceptId(id: string) {
+    return this.movieModel.find({ _id: { $ne: id } }).lean();
+  }
 }

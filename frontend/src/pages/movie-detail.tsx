@@ -101,13 +101,13 @@ export function MovieDetailPage({ movieId, onBack }: MovieDetailPageProps) {
                             {/* Rating */}
                             <div className="flex items-center gap-2">
                                 <Star className="h-6 w-6 fill-orange-500 text-orange-500" />
-                                <span className="text-2xl font-semibold">{movie.rating.toFixed(1)}</span>
+                                <span className="text-2xl font-semibold">{movie.rating ? movie.rating.toFixed(1) : "N/A"}</span>
                             </div>
 
                             {/* Duration */}
                             <div className="flex items-center gap-2">
                                 <Clock className="h-6 w-6 text-orange-500" />
-                                <span className="text-lg">{movie.duration} mins</span>
+                                <span className="text-lg">{movie.duration ? `${movie.duration} mins` : "N/A"}</span>
                             </div>
 
                             {/* Views */}
