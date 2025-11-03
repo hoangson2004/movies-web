@@ -1,4 +1,4 @@
-export function RecommendedMovies({ movieId }: { movieId: string }) {
+export function RecommendedMovies() {
     return (
         <div className="py-12">
             <h2 className="text-2xl md:text-3xl font-bold mb-8">Recommended Movies</h2>

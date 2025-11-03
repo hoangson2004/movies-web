@@ -159,7 +159,7 @@ export function MovieDetailPage({ movieId, onBack }: MovieDetailPageProps) {
 
                 {/* Recommended Movies Placeholder */}
                 <div className="mt-16">
-                    <RecommendedMovies movieId={movieId} />
+                    <RecommendedMovies/>
                 </div>
             </div>
         </main>
